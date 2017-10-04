@@ -8,13 +8,13 @@ permanentModule = Extension('qlab.utils.permanent',
 
 setup(
     name='qlab',
-    version='1.0.1',
+    version='1.0.2',
     description='qlab is a Python package that provides methods useful to the Quantum Information Lab @ La Sapienza.',
     author='Matteo Pompili',
     author_email='matpompili@gmail.com',
     license='GNU',
     url='https://github.com/matpompili/qlab/',
-    download_url='https://github.com/matpompili/qlab/archive/v1.0.1-beta.tar.gz',
+    download_url='https://github.com/matpompili/qlab/archive/v1.0.2-beta.tar.gz',
     classifiers = [
     'Development Status :: 4 - Beta',
     'Environment :: Console',
