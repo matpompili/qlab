@@ -1,6 +1,11 @@
 qlab package
 ============
 
+.. automodule:: qlab
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
@@ -9,10 +14,3 @@ Subpackages
     qlab.controllers
     qlab.utils
 
-Module contents
----------------
-
-.. automodule:: qlab
-    :members:
-    :undoc-members:
-    :show-inheritance:
