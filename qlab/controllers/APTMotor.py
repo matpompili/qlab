@@ -19,12 +19,7 @@ Michael Leung
 mcleung@stanford.edu
 """
 
-try:
-    from ctypes import WinDLL
-except:
-    pass
-
-from ctypes import c_long, c_buffer, c_float, pointer
+from ctypes import c_long, c_buffer, c_float, pointer, WinDLL
 
 import os
 #print(os.getcwd())

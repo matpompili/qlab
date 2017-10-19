@@ -1,5 +1,7 @@
 import visa
 
+__all__ = ['LeoniFiberSwitch']
+
 class LeoniFiberSwitch:
     """An interface to the Leoni FiberSwitch© series.
 
@@ -9,30 +11,43 @@ class LeoniFiberSwitch:
         model (int): The number of output channels of the FiberSwitch©.
         dark (int, optional): The number of the channel that will be considered as `dark`.
 
+    Raises:
+        AssertionError: If the connection to the FiberSwitch© fails raises an exception.
+
     Examples:
-        Connect to a Leoni FiberSwitch© model 1x8 at address `ASRL42::INSTR`,
+        Connect to a Leoni FiberSwitch© model 1x8 at address `ASRL42::INSTR`
 
-        >>> myswitcher = LeoniFiberSwitch(address=42, model=8)
+        >>> my_switcher = LeoniFiberSwitch(address=42, model=8)
 
-        Let's read in which channel the FiberSwitch© is,
+        Let's read in which ``channel`` the FiberSwitch© is
 
-        >>> print(myswitcher.channel)
+        >>> print(my_switcher.channel)
         6
 
-        Let's switch to channel 3 and check again,
+        Let's switch to ``channel`` 3 and check again
 
-        >>> myswitcher.channel = 3
-        >>> print(myswitcher.channel)
+        >>> my_switcher.channel = 3
+        >>> print(my_switcher.channel)
         3
+
+        Using the ``dark`` channels
+        
+        >>> my_switcher.channel = 5
+        >>> my_switcher.dark = 8
+        >>> my_switcher.dark_on()
+        True
+        >>> print(my_switcher.channel)
+        8
+        >>> my_switcher.dark_off()
+        True
+        >>> print(my_switcher.channel)
+        5
 
     Note:
         Remember to delete the object when it is not needed anymore, otherwise the
         USB link will remain busy:
 
-        >>> del myswitcher
-
-    Raises:
-        AssertionError: If the connection to the FiberSwitch© fails raises an exception.
+        >>> del my_switcher
     """
 
     def __init__(self, address, model, dark=None):
@@ -65,6 +80,8 @@ class LeoniFiberSwitch:
             self._dark = None
 
         self._read_channel()
+        self._is_dark = False
+        self._channel_backup = self._channel
 
     def __del__(self):
         self._link.close()
@@ -74,6 +91,7 @@ class LeoniFiberSwitch:
 
     @property
     def channel(self):
+        """The output channel of the FiberSwitch©."""
         return self._channel
 
     @channel.setter
@@ -85,6 +103,7 @@ class LeoniFiberSwitch:
 
     @property
     def dark(self):
+        """The channel that is used as a `dead end` of the FiberSwitch©."""
         return self._dark
 
     @dark.setter
@@ -92,6 +111,34 @@ class LeoniFiberSwitch:
         assert channel-1 in range(self._model), "Dark channel is out of range."
         self._dark = channel
 
-    def go_dark(self):
-        if self.dark is not None:
+    def dark_on(self):
+        """Switch to the ``dark`` channel.
+
+        Returns:
+            bool: True if it was not in dark state, False otherwise.
+
+        Raises:
+            AssertionError: if the ``dark`` channel was not set.
+        """
+        assert self.dark is not None, "No dark channel was set."
+        if self._is_dark is False:
+            self._channel_backup = self._channel
             self.channel = self.dark
+            return True
+        return False
+
+
+    def dark_off(self):
+        """Switch back to the channel that was on before ``dark_on``.
+
+        Returns:
+            bool: True if it was not in dark state, False otherwise.
+
+        Raises:
+            AssertionError: if the ``dark`` channel was not set.
+        """
+        assert self.dark is not None, "No dark channel was set."
+        if self._is_dark is True:
+            self.channel = self._channel_backup
+            return True
+        return False
